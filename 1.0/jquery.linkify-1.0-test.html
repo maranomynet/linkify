@@ -1,40 +1,84 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<!-- encoding: utf-8 -->
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="is">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="is" lang="is">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <title>jQuery.linkify test</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Linkify test</title>
+  <link href="../../testsuite/testsuite.css" rel="Stylesheet" media="screen" />
   <script src="../../jquery/1.2/jquery-1.2.js"></script>
+  <script src="../../testsuite/testrunner.js"></script>
+
+  <!-- links to scripts to test -->
   <script src="jquery.linkify-1.0.js"></script>
-  <script>
-    $(function(){
-      jQuery('body').linkify();
-    });
-  </script>
+
+<script>
+
+// documentaion can be found here:
+//  http://dev.jquery.com/wiki/DevelopersGuide
+
+test('Linkify', function () {
+  var $ = jQuery;
+
+  ok( $.fn.linkify, 'Linkify present');
+
+  var pees = $('#main p');
+  var htmls = $.map(pees, function(p){ return p.innerHTML; });
+
+
+  $('#main')
+      .linkify()
+      .find('p')
+          .each(function(i){
+              var num = i<7 ? 1 : 0;
+              ok( ($('a', this).length == num), htmls[i]+ '    ==>    ' +this.innerHTML);
+            });
+
+  // You can specify the number of expected assertions by calling 
+  // expect(Number) at the start of your test. 
+  
+  // Asserts that two arrays are the same
+  // array1, array2, message
+  // isSet([1,2,3], [1,2,3], 'arraytest');
+
+  // Asserts that two objects are equivalent
+  // obj1, obj2, message
+  // isObj({'a':1},{'a':1},'objecttest')
+  
+  // Returns an array of elements with the given IDs, eg.
+  // example:  q("main", "foo", "bar")
+  // result [<div id="main">, <span id="foo">, <input id="bar">]
+  // q("main", "foo", "bar")
+  
+  // Assert that something is present/true
+  // (evaluation), message
+  // ok( document.getElementById, 'getElementById' );
+});
+
+</script>
 
 </head>
-<body>
+<body id="body" class="">
+  <h1 id="header">Linkify test</h1>
+  <h2 id="banner"></h2>
+  <h2 id="userAgent"></h2>
+  
+  <!-- test data goes in here -->
+  <div id="main" style="display: none;">
 
-  <h1>jQuery.linkify plugin test</h1>
+    <p class="p0">http://www.foo.is</p>
+    <p class="p1"> www.foo.is </p>
+    <p class="p2">Lorem ipsum,"http://www.foo.is" dolor sit amet,</p>
+    <p class="p3">sed do<b>www.foo.is/b/sh?foo=1#w4f</b> tempor</p>
+    <p class="p4">mailto:blablabla<b>lorem ipsum dolor</b></p>
+    <p class="p5">&lt;ftp://www.foo.is></p>
+    <p class="p6"><a href="http://www.foo.is">http://www.foo.is</a></p>
 
-  <div>
+    <p class="p7">teturhttp://www.foo.is adipisicing elit,</p>
+    <p class="p8"><button>www.foo.is</button></p>
+    <p class="p9"><textarea>www.foo.is</textarea></p>
 
-    <p>&lt;http://www.foobar.is/dkah&gt;
-      Lorem ipsum dolor sit amet, consectetur 
-      <strong>www.mbl.is/foobar?blah=1#foobar
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-      </strong>
-      adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
-      mailto:foobar@smublah.is
-      nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
-      <b>asdfd ftp://adfælkj asdfd</b>
-      Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-      www.foobar.is dkdk
-    </p>
 
   </div>
-    
-
+  <ol id="tests"></ol>
 </body>
 </html>
