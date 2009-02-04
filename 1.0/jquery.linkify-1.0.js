@@ -1,3 +1,6 @@
+// Requires jQuery 1.2.6
+// Runs OK in 1.3
+
 (function($){
 
   var url1 = /(^|"|&lt;|\s)(www\..+?\..+?)(\s|&gt;|"|$)/g,
