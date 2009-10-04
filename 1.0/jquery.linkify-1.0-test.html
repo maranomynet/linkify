@@ -4,67 +4,50 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>Linkify test</title>
-  <script src="../../jquery/1.3/jquery-1.3.js"></script>
-  <link  href="../../testsuite/1.2/testsuite.css" rel="stylesheet" media="screen" />
-  <script src="../../testsuite/1.2/testrunner.js"></script>
+  <link  href="../../qunit/qunit/qunit.css" rel="stylesheet" media="screen" />
+  <script src="../../qunit/qunit/qunit.js"></script>
 
   <!-- links to scripts to test -->
+  <script src="../../jquery/1.3/jquery-1.3.js"></script>
   <script src="jquery.linkify-1.0.js"></script>
 
 <script>
+  /* ==================================================================
+      Documentation: http://docs.jquery.com/QUnit#API_documentation
+    ================================================================== */
 
-// documentaion can be found here:
-//  http://dev.jquery.com/wiki/DevelopersGuide
+  test('Linkify', function () {
+      var $ = jQuery;
 
-test('Linkify', function () {
-  var $ = jQuery;
+      ok( $.fn.linkify, 'Linkify present');
 
-  ok( $.fn.linkify, 'Linkify present');
-
-  var pees = $('#main p');
-  var htmls = $.map(pees, function(p){ return p.innerHTML; });
+      var pees = $('#main p');
+      var htmls = $.map(pees, function(p){ return p.innerHTML; });
 
 
-  $('#main')
-      .linkify()
-      .find('p')
-          .each(function(i){
-              var num = i<7 ? 1 : 0;
-              ok( ($('a', this).length == num), htmls[i]+ '    ==>    ' +this.innerHTML);
-            });
+      $('#main')
+          .linkify()
+          .find('p')
+              .each(function(i){
+                  var num = i<7 ? 1 : 0;
+                  ok( ($('a', this).length == num), htmls[i]+ '    ==>    ' +this.innerHTML);
+                });
 
-  // You can specify the number of expected assertions by calling 
-  // expect(Number) at the start of your test. 
-  
-  // Asserts that two arrays are the same
-  // array1, array2, message
-  // isSet([1,2,3], [1,2,3], 'arraytest');
-
-  // Asserts that two objects are equivalent
-  // obj1, obj2, message
-  // isObj({'a':1},{'a':1},'objecttest')
-  
-  // Returns an array of elements with the given IDs, eg.
-  // example:  q("main", "foo", "bar")
-  // result [<div id="main">, <span id="foo">, <input id="bar">]
-  // q("main", "foo", "bar")
-  
-  // Assert that something is present/true
-  // (evaluation), message
-  // ok( document.getElementById, 'getElementById' );
-});
+    });
 
 </script>
 
 </head>
-<body id="body" class="">
-  <h1 id="header">Linkify test</h1>
-  <h2 id="banner"></h2>
-  <h2 id="userAgent"></h2>
-  
+<body>
+  <h1 id="qunit-header">Linkify test</h1>
+  <h2 id="qunit-banner"></h2>
+  <div id="qunit-testrunner-toolbar"></div>
+  <h2 id="qunit-userAgent"></h2>
+  <ol id="qunit-tests"></ol>
+
+
   <!-- test data goes in here -->
   <div id="main" style="display: none;">
-
     <p class="p0">http://www.foo.is</p>
     <p class="p1"> www.foo.is </p>
     <p class="p2">Lorem ipsum,"http://www.foo.is" dolor sit amet,</p>
@@ -72,13 +55,11 @@ test('Linkify', function () {
     <p class="p4">mailto:blablabla<b>lorem ipsum dolor</b></p>
     <p class="p5">&lt;ftp://www.foo.is></p>
     <p class="p6"><a href="http://www.foo.is">http://www.foo.is</a></p>
-
     <p class="p7">teturhttp://www.foo.is adipisicing elit,</p>
     <p class="p8"><button>www.foo.is</button></p>
     <p class="p9"><textarea>www.foo.is</textarea></p>
-
-
   </div>
-  <ol id="tests"></ol>
+
+
 </body>
 </html>
