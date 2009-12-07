@@ -1,1 +1,3 @@
+// encoding: utf-8
+// $.fn.linkify 1.0  -- (c) 2009 Hugsmiðjan ehf. 
 (function(c){var f=/(^|"|&lt;|\s)(www\..+?\..+?)(\s|&gt;|"|$)/g,g=/(^|"|&lt;|\s)(((https?|ftp):\/\/|mailto:).+?)(\s|&gt;|"|$)/g;c.fn.linkify=function(){return this.each(function(){var d=this.childNodes,e=d.length;while(e--){var a=d[e];if(a.nodeType==3){var b=a.nodeValue;if(/\S/.test(b)){b=b.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(f,"$1<a href='http://$2'>$2</a>$3").replace(g,"$1<a href='$2'>$2</a>$5");c(a).after(b).remove()}}else if(a.nodeType==1&&!/^(a|button|textarea)$/i.test(a.tagName)){arguments.callee.call(a)}}})}})(jQuery);
