@@ -2,9 +2,9 @@
 // ----------------------------------------------------------------------------------
 // jQuery.fn.linkify v 1.0
 // ----------------------------------------------------------------------------------
-// (c) 2009 Hugsmiðjan ehf  -- http://www.hugsmidjan.is
+// (c) 2009 HugsmiÃ°jan ehf  -- http://www.hugsmidjan.is
 //  written by:
-//   * Már Örlygsson        -- http://mar.anomy.net
+//   * MÃ¡r Ã–rlygsson        -- http://mar.anomy.net
 // ----------------------------------------------------------------------------------
 
 (function($){
@@ -26,8 +26,8 @@
             html = html.replace(/&/g, '&amp;')
                        .replace(/</g, '&lt;')
                        .replace(/>/g, '&gt;')
-                       .replace(url1, "$1<a href='http://$2'>$2</a>$3")
-                       .replace(url2, "$1<a href='$2'>$2</a>$5");
+                       .replace(url1, '$1<a href="http://$2">$2</a>$3')
+                       .replace(url2, '$1<a href="$2">$2</a>$5');
             $(n).after(html).remove();
           }
         }
