@@ -5,16 +5,23 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <title>jQuery.linkify demo</title>
-  <script src="../../jquery/1.3/jquery-1.3.js"></script>
+<!-- 
+  CDN link:
+  <script src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
+-->
+  <script src="../../jquery/1.4/jquery-1.4.js"></script>
   <script src="jquery.linkify-1.0.js"></script>
   <script>
     $(function(){
+      jQuery('#warning').remove();
       jQuery('body').linkify();
     });
   </script>
 
 </head>
 <body>
+
+  <p id="warning"><strong>Warning:</strong> If you see this message you might have to change the <code>&lt;script /></code> link to point to <em>your</em> copy of jQuery.</p>
 
   <h1>jQuery.linkify plugin</h1>
 

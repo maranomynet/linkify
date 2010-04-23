@@ -1,11 +1,40 @@
-// encoding: utf-8
-// ----------------------------------------------------------------------------------
-// jQuery.fn.linkify v 1.0
-// ----------------------------------------------------------------------------------
-// (c) 2009 Hugsmiðjan ehf  -- http://www.hugsmidjan.is
-//  written by:
-//   * Már Örlygsson        -- http://mar.anomy.net
-// ----------------------------------------------------------------------------------
+/* encoding: utf-8
+
+  ****  linkify plugin for jQuery - automatically finds and changes URLs in text content into proper hyperlinks  ****
+
+  Version: 1.0
+
+  Copyright (c) 2009
+    Már Örlygsson  (http://mar.anomy.net/) &
+    Hugsmiðjan ehf. (http://www.hugsmidjan.is)
+
+  Dual licensed under a MIT licence (http://en.wikipedia.org/wiki/MIT_License)
+  and GPL 2.0 or above (http://www.gnu.org/licenses/old-licenses/gpl-2.0.html).
+
+-----------------------------------------------------------------------------
+
+  Demo and Qunit-tests:
+    * <./jquery.linkify-1.0-demo.html>
+    * <./jquery.linkify-1.0-test.html>
+
+  Documentation:
+    * ...
+
+  Get updates from:
+    * <http://github.com/maranomynet/linkify/>
+    * <git://github.com/maranomynet/linkify.git>
+
+-----------------------------------------------------------------------------
+
+  Requires:
+    * jQuery (1.2.6 or later)
+
+  Usage:
+
+      jQuery('.articlebody').linkify();
+
+
+*/
 
 (function($){
 
@@ -39,10 +68,3 @@
   };
 
 })(jQuery);
-
-
-/* Usage:
-
-  jQuery('.articlebody').linkify();
-
-*/
