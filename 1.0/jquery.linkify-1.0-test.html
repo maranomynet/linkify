@@ -23,6 +23,8 @@
     ================================================================== */
 
   test('Linkify', function () {
+      expect(11);
+
       var $ = jQuery;
 
       $('#warning').remove();
@@ -37,8 +39,16 @@
           .linkify()
           .find('p')
               .each(function(i){
-                  var num = i<7 ? 1 : 0;
-                  ok( ($('a', this).length == num), htmls[i]+ '    ==>    ' +this.innerHTML);
+                  var p = $(this),
+                      a = p.find('a');
+                  if ( p.is('[title]') )
+                  {
+                    ok( a.length === 1  &&  (a.attr('href')||'') === p.attr('title') , htmls[i]+ '\n    ==>    ' +this.innerHTML);
+                  }
+                  else
+                  {
+                    ok( a.length === 0, htmls[i]+ '\n    ==>    ' +this.innerHTML);
+                  }
                 });
 
     });
@@ -58,16 +68,16 @@
 
   <!-- test data goes in here -->
   <div id="main" style="display: none;">
-    <p class="p0">http://www.foo.is</p>
-    <p class="p1"> www.foo.is </p>
-    <p class="p2">Lorem ipsum,"http://www.foo.is" dolor sit amet,</p>
-    <p class="p3">sed do<b>www.foo.is/b/sh?foo=1#w4f</b> tempor</p>
-    <p class="p4">mailto:blablabla<b>lorem ipsum dolor</b></p>
-    <p class="p5">&lt;ftp://www.foo.is></p>
-    <p class="p6"><a href="http://www.foo.is">http://www.foo.is</a></p>
-    <p class="p7">teturhttp://www.foo.is adipisicing elit,</p>
-    <p class="p8"><button>www.foo.is</button></p>
-    <p class="p9"><textarea>www.foo.is</textarea></p>
+    <p class="p2" title="http://www.foo.is">http://www.foo.is</p>
+    <p class="p3" title="http://www.foo.is"> www.foo.is </p>
+    <p class="p4" title="http://www.foo.is">Lorem ipsum,"http://www.foo.is" dolor sit amet,</p>
+    <p class="p5" title="http://www.foo.is/b/sh?foo=1#w4f">sed do<b>www.foo.is/b/sh?foo=1#w4f</b> tempor</p>
+    <p class="p6" title="mailto:blablabla">mailto:blablabla<b>lorem ipsum dolor</b></p>
+    <p class="p7" title="ftp://www.foo.is">&lt;ftp://www.foo.is></p>
+    <p class="p8" title="http://www.foo.is"><a href="http://www.foo.is">http://www.foo.is</a></p>
+    <p class="p9">teturhttp://www.foo.is adipisicing elit,</p>
+    <p class="p10"><button>www.foo.is</button></p>
+    <p class="p11"><textarea>www.foo.is</textarea></p>
   </div>
 
 

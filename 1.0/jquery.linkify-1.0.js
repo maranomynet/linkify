@@ -55,8 +55,9 @@
             html = html.replace(/&/g, '&amp;')
                        .replace(/</g, '&lt;')
                        .replace(/>/g, '&gt;')
-                       .replace(url1, '$1<a href="http://$2">$2</a>$3')
-                       .replace(url2, '$1<a href="$2">$2</a>$5');
+                       .replace(url1, '$1<a href="<``>://$2">$2</a>$3')
+                       .replace(url2, '$1<a href="$2">$2</a>$5')
+                       .replace(/"<``>/g, '"http');
             $(n).after(html).remove();
           }
         }
