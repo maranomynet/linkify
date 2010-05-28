@@ -16,42 +16,95 @@
   <!-- links to scripts to test -->
   <script src="../../jquery/1.4/jquery-1.4.js"></script>
   <script src="jquery.linkify-1.0.js"></script>
+  <script src="jquery.linkify-1.0-twitter.js"></script>
 
 <script>
   /* ==================================================================
       Documentation: http://docs.jquery.com/QUnit#API_documentation
     ================================================================== */
 
-  test('Linkify', function () {
-      expect(11);
+  jQuery(function($){
 
-      var $ = jQuery;
+    var $ = jQuery;
+    $('#warning').remove();
 
-      $('#warning').remove();
+    var testEach = function(i){
+            var p = $(this),
+                a = p.find('a'),
+                pTitle = p.attr('title'),
+                pLinktext = p.attr('data-linktext'),
+                isOk;
 
-      ok( $.fn.linkify, 'Linkify present');
+            isOk = !pTitle ?
+                      a.length === 0:
+                      a.length === 1  &&  (a.attr('href')||'') === pTitle  &&  a.text() === (pLinktext||pTitle);
+            ok( isOk,  p.data('orgHtml')+'\n &nbsp;  ==>    '+this.innerHTML );
+          },
 
-      var pees = $('#main p');
-      var htmls = $.map(pees, function(p){ return p.innerHTML; });
+        prepTest = function (selector) {
+            var cont = $(selector);
+                pees = cont.find('p').each(function () { $(this).data('orgHtml', this.innerHTML); });
+            expect( pees.length );
+            return cont;
+          },
+
+        pluginBackup;
 
 
-      $('#main')
-          .linkify()
-          .find('p')
-              .each(function(i){
-                  var p = $(this),
-                      a = p.find('a');
-                  if ( p.is('[title]') )
-                  {
-                    ok( a.length === 1  &&  (a.attr('href')||'') === p.attr('title') , htmls[i]+ '\n    ==>    ' +this.innerHTML);
-                  }
-                  else
-                  {
-                    ok( a.length === 0, htmls[i]+ '\n    ==>    ' +this.innerHTML);
-                  }
-                });
+    test('Ensure Linkify presence', function () {
+        ok( $.fn.linkify, 'Linkify present');
+        ok( $.fn.linkify.plugins, 'Plugins present');
+      });
 
-    });
+    // disable plugins while running initial tests
+    test('No plugins', function () {
+        pluginBackup = $.fn.linkify.plugins;
+        $.fn.linkify.plugins = {};
+        prepTest('#basic').linkify().find('p').each(testEach);
+      });
+
+
+    // re-enable plugins and run plugin tests
+    // 1) all plugins should be used by default
+    test('With plugins (all by default)', function () {
+        $.fn.linkify.plugins = pluginBackup;
+        prepTest('#wplugin').linkify().find('p').each(testEach);
+      });
+    // 2) try selecting plugins-by-name
+    test('With Twitter plugins (String)', function () {
+        prepTest('#wplugin').linkify('twitterUser, twitterHashtag').find('p').each(testEach);
+      });
+    test('With Twitter plugins (config.use String)', function () {
+        prepTest('#wplugin').linkify({ use:'twitterUser, twitterHashtag' }).find('p').each(testEach);
+      });
+    test('With Twitter plugins (config.use Array)', function () {
+        prepTest('#wplugin').linkify({ use:['twitterUser', 'twitterHashtag'] }).find('p').each(testEach);
+      });
+
+    // 3) invalid plugin names should be silently disregarded
+    test('Mixing in some bogus plugins (String)', function () {
+        prepTest('#wplugin').linkify('bogus,twitterUser , twitterHashtag ').find('p').each(testEach);
+      });
+    test('Mixing in some bogus plugins (config.use String)', function () {
+        prepTest('#wplugin').linkify({ use:'bogus,twitterUser ,twitterHashtag' }).find('p').each(testEach);
+      });
+    test('Mixing in some bogus plugins (config.use Array)', function () {
+        prepTest('#wplugin').linkify({ use:['bogus', 'twitterUser', 'twitterHashtag'] }).find('p').each(testEach);
+      });
+
+    // try only supplying an invalid plugin name
+    test('Only bogus plugins (String)', function () {
+        prepTest('#noplugin').linkify('bogus').find('p').each(testEach);
+      });
+    test('Only bogus plugins (config.use String)', function () {
+        prepTest('#noplugin').linkify({ use:'bogus' }).find('p').each(testEach);
+      });
+    test('Only bogus plugins (config.use Array)', function () {
+        prepTest('#noplugin').linkify({ use:['bogus'] }).find('p').each(testEach);
+      });
+
+  });
+
 
 </script>
 
@@ -59,7 +112,7 @@
 <body>
   <p id="warning"><strong>Warning:</strong> If you see this message you might have to change the <code>&lt;script /></code> links to point to <em>your</em> copies of jQuery and Qunit.</p>
 
-  <h1 id="qunit-header">Linkify test</h1>
+  <h1 id="qunit-header">Testing Linkify + Twitter plugin</h1>
   <h2 id="qunit-banner"></h2>
   <div id="qunit-testrunner-toolbar"></div>
   <h2 id="qunit-userAgent"></h2>
@@ -68,16 +121,59 @@
 
   <!-- test data goes in here -->
   <div id="main" style="display: none;">
-    <p class="p2" title="http://www.foo.is">http://www.foo.is</p>
-    <p class="p3" title="http://www.foo.is"> www.foo.is </p>
-    <p class="p4" title="http://www.foo.is">Lorem ipsum,"http://www.foo.is" dolor sit amet,</p>
-    <p class="p5" title="http://www.foo.is/b/sh?foo=1#w4f">sed do<b>www.foo.is/b/sh?foo=1#w4f</b> tempor</p>
-    <p class="p6" title="mailto:blablabla">mailto:blablabla<b>lorem ipsum dolor</b></p>
-    <p class="p7" title="ftp://www.foo.is">&lt;ftp://www.foo.is></p>
-    <p class="p8" title="http://www.foo.is"><a href="http://www.foo.is">http://www.foo.is</a></p>
-    <p class="p9">teturhttp://www.foo.is adipisicing elit,</p>
-    <p class="p10"><button>www.foo.is</button></p>
-    <p class="p11"><textarea>www.foo.is</textarea></p>
+    <!--
+      Each <p> element's is linkified and then searched for links afterwards
+      the presence of title="" implies that a link should be created. No title="" implies that no links is expected
+      the value of title="" contains the expected href value of the created link.
+    -->
+    <!-- No plugins - just hyperlinks -->
+    <div id="basic">
+      <p title="http://www.foo.is">http://www.foo.is</p>
+      <p title="http://www.foo.is/">http://www.foo.is/ asdf </p>
+      <p title="http://www.foo.is:8080">http://www.foo.is:8080. asd</p>
+      <p title="http://www.foo.is:8080/path/?foo=1#arg">http://www.foo.is:8080/path/?foo=1#arg #asdasdf</p>
+      <p title="http://www.foo.is/#foo">http://www.foo.is/#foo ?asddf</p>
+      <p title="http://www.foo.is/">should I visit http://www.foo.is/? Sure</p>
+      <p title="http://www.foo.is/?foo=1;bar=1">http://www.foo.is/?foo=1;bar=1</p>
+      <p title="http://www.foo.is" data-linktext="www.foo.is"> www.foo.is </p>
+      <p title="http://www.foo.is/" data-linktext="www.foo.is/"> www.foo.is/ </p>
+      <p title="http://www.foo.is/path" data-linktext="www.foo.is/path"> www.foo.is/path </p>
+      <p title="http://www.foo.is">Lorem ipsum, "http://www.foo.is" dolor sit amet,</p>
+      <p title="https://www.foo.is">&lt;a href="https://www.foo.is"&gt;foo&lt;/a&gt;</p>
+      <p title="http://www.foo.is">http://www.foo.is.</p>
+      <p title="http://www.foo.is/b/sh?foo=1#w4f" data-linktext="www.foo.is/b/sh?foo=1#w4f">sed do<b>www.foo.is/b/sh?foo=1#w4f</b> tempor</p>
+      <p title="http://www.foo.is/b/sh?foo=1#w4f" data-linktext="www.foo.is/b/sh?foo=1#w4f">sed do www.foo.is/b/sh?foo=1#w4f tempor</p>
+      <p title="mailto:notreallyanemailaddressbutwhocares">mailto:notreallyanemailaddressbutwhocares<b>lorem ipsum dolor</b></p>
+      <p title="mailto:really@an.email.addr">blah mailto:really@an.email.addr blah</p>
+      <p title="ftp://www.foo.is">&lt;ftp://www.foo.is></p>
+      <p title="http://www.foo.is"><a href="http://www.foo.is">http://www.foo.is</a></p>
+      <p>tetur.www.foo.is elit,</p>
+      <p>teturhttp://www.foo.is elit,</p>
+      <p>nomailto://www.foo.is elit,</p>
+      <p title="http://www.foo.is">tetur (http://www.foo.is) elit,</p>
+      <p><button>www.foo.is</button></p>
+      <p><textarea>www.foo.is</textarea></p>
+    </div>
+
+    <div id="wplugin">
+      <p title="http://www.foo.is">http://www.foo.is</p>
+      <p title="http://www.twitter.com/username" data-linktext="@username">@username</p>
+      <p title="http://www.twitter.com/username" data-linktext="@username">blah @username blah</p>
+      <p title="http://www.twitter.com/username" data-linktext="@username">(@username)</p>
+      <p title="http://www.twitter.com/search?q=%23hashtag" data-linktext="#hashtag">#hashtag</p>
+      <p title="http://www.twitter.com/search?q=%23hashtag" data-linktext="#hashtag">blah #hashtag blah</p>
+      <p title="http://www.twitter.com/search?q=%23hashtag" data-linktext="#hashtag">blah (#hashtag)</p>
+    </div>
+
+    <div id="noplugin">
+      <p title="http://www.foo.is">http://www.foo.is</p>
+      <p>@username</p>
+      <p>blah @username blah</p>
+      <p>(@username)</p>
+      <p>#hashtag</p>
+      <p>blah #hashtag blah</p>
+    </div>
+
   </div>
 
 
