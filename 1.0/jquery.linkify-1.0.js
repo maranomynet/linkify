@@ -5,7 +5,7 @@
   Version: 1.0
 
   Copyright (c) 2009
-    Már Örlygsson  (http://mar.anomy.net/) &
+    Már Örlygsson  (http://mar.anomy.net/)  &
     Hugsmiðjan ehf. (http://www.hugsmidjan.is)
 
   Dual licensed under a MIT licence (http://en.wikipedia.org/wiki/MIT_License)
