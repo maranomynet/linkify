@@ -37,8 +37,10 @@
 
             isOk = !pTitle ?
                       a.length === 0:
-                      a.length === 1  &&  (a.attr('href')||'') === pTitle  &&  a.text() === (pLinktext||pTitle);
-            ok( isOk,  p.data('orgHtml')+'\n &nbsp;  ==>    '+this.innerHTML );
+                      a.length === pTitle.split(',').length
+                        &&  $.map(a, function(a){ return $(a).attr('href')||''; }).join(',') === pTitle
+                        &&  $.map(a, function(a){ return $(a).text(); }).join(',') === (pLinktext||pTitle);
+            ok( isOk,  p.data('orgHtml')+'\n    ==>    '+this.innerHTML );
           },
 
         prepTest = function (selector) {
@@ -131,6 +133,7 @@
       <p title="http://www.foo.is">http://www.foo.is</p>
       <p title="http://www.foo.is/">http://www.foo.is/ asdf </p>
       <p title="http://www.foo.is:8080">http://www.foo.is:8080. asd</p>
+      <p title="http://www.foo.is:8080,http://www.foo.is/#foo">http://www.foo.is:8080. asd (http://www.foo.is/#foo)...</p>
       <p title="http://www.foo.is:8080/path/?foo=1#arg">http://www.foo.is:8080/path/?foo=1#arg #asdasdf</p>
       <p title="http://www.foo.is/#foo">http://www.foo.is/#foo ?asddf</p>
       <p title="http://www.foo.is/">should I visit http://www.foo.is/? Sure</p>
@@ -157,6 +160,9 @@
 
     <div id="wplugin">
       <p title="http://www.foo.is">http://www.foo.is</p>
+      <p title="http://www.foo.is,http://www.twitter.com/username" data-linktext="http://www.foo.is,@username">blah http://www.foo.is @username blah</p>
+      <p title="http://www.foo.is/,http://www.twitter.com/search?q=%23hashtag" data-linktext="http://www.foo.is/,#hashtag">blah &lt;http://www.foo.is/&gt; blah #hashtag blah</p>
+      <p title="http://www.foo.is/,http://www.twitter.com/search?q=%23hashtag" data-linktext="http://www.foo.is/,#hashtag">blah (http://www.foo.is/) (#hashtag) blah</p>
       <p title="http://www.twitter.com/username" data-linktext="@username">@username</p>
       <p title="http://www.twitter.com/username" data-linktext="@username">blah @username blah</p>
       <p title="http://www.twitter.com/username" data-linktext="@username">(@username)</p>
