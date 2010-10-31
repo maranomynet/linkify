@@ -61,6 +61,10 @@
       jQuery('.articlebody').linkify({  use: []  });
       jQuery('.articlebody').linkify({  use: ['']  });
 
+      // Perfmorm actions on all newly created links:
+      jQuery('.articlebody').linkify( function (links){ links.addClass('linkified'); } );
+      jQuery('.articlebody').linkify({  handleLinks: function (links){ links.addClass('linkified'); }  });
+
 */
 
 (function($){
@@ -78,12 +82,17 @@
       linkify = $.fn.linkify = function ( cfg ) {
           if ( !$.isPlainObject( cfg ) )
           {
-            cfg = { use:cfg };
+            cfg = {
+                use:         (typeof cfg == 'string') ? cfg : undefined,
+                handleLinks: $.isFunction(cfg) ? cfg : arguments[1]
+              };
           }
           var use = cfg.use,
               allPlugins = linkify.plugins || {},
               plugins = [linkifier],
-              tmpCont;
+              tmpCont,
+              newLinks = [],
+              callback = cfg.handleLinks;
           if ( use == undefined ||  use == '*' ) // use === undefined  ||  use === null
           {
             for ( var name in allPlugins )
@@ -107,7 +116,7 @@
             }
           }
 
-          return this.each(function () {
+          this.each(function () {
               var childNodes = this.childNodes,
                   i = childNodes.length;
               while ( i-- )
@@ -152,6 +161,13 @@
                       }
                     }
                     html = tmpCont.innerHTML;
+                    if ( callback )
+                    {
+                      html = $('<div/>').html(html);
+                      //newLinks.push.apply( newLinks,  html.find('a').toArray() );
+                      newLinks = newLinks.concat( html.find('a').toArray().reverse() );
+                      html = html.contents();
+                    }
                     htmlChanged  &&  $(n).after(html).remove();
                   }
                 }
@@ -161,6 +177,8 @@
                 }
               };
           });
+          callback  &&  callback( $(newLinks.reverse()) );
+          return this;
         };
 
   linkify.plugins = {};

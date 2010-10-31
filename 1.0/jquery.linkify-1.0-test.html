@@ -138,6 +138,34 @@
             testLinks(links, '#wplugin');
           };
 
+    // try using the callback
+    test('First parameter is a handleLinks callback', function () {
+        expect(1);
+        $('#basic').linkify(testLinks);
+      });
+    test('Second parameter is a handleLinks callback', function () {
+        expect(1);
+        $('#basic').linkify('', testLinks);
+      });
+    test('Second parameter handleLinks callback should *NOT* run when first param .isPlainObject()', function () {
+        expect(1);
+        ok(true, 'dummy test - because Qunit doesn\'t support `except(0);`');
+        $('#basic').linkify({}, testLinks);
+      });
+    test('Second parameter handleLinks callback - with all plugins', function () {
+        expect(1);
+        $('#wplugin').linkify(undefined, testLinks2);
+      });
+    test('Second parameter handleLinks callback - with named plugins', function () {
+        expect(1);
+        $('#wplugin').linkify('twitterUser, twitterHashtag', testLinks2);
+      });
+    test('handleLinks setting, with named plugins', function () {
+        expect(1);
+        $('#wplugin').linkify({  use: 'twitterUser, twitterHashtag',  handleLinks: testLinks2  });
+      });
+
+
   });
 
 
