@@ -44,10 +44,22 @@
 
       // Uses all plugins by default:
       jQuery('.articlebody').linkify();
+
       // Use only certain plugins:
-      jQuery('.articlebody').linkify('name1,name2');
+      jQuery('.articlebody').linkify( 'name1,name2' );
       jQuery('.articlebody').linkify({  use: 'name1,name2'  });
       jQuery('.articlebody').linkify({  use: ['name1','name2']  });
+
+      // Explicitly use all plugins:
+      jQuery('.articlebody').linkify('*');
+      jQuery('.articlebody').linkify({  use: '*'  });
+      jQuery('.articlebody').linkify({  use: ['*']  });
+
+      // Use no plugins:
+      jQuery('.articlebody').linkify('');
+      jQuery('.articlebody').linkify({  use: ''  });
+      jQuery('.articlebody').linkify({  use: []  });
+      jQuery('.articlebody').linkify({  use: ['']  });
 
 */
 
@@ -64,8 +76,7 @@
 
 
       linkify = $.fn.linkify = function ( cfg ) {
-          cfg = cfg || {};
-          if ( typeof cfg == 'string' )
+          if ( !$.isPlainObject( cfg ) )
           {
             cfg = { use:cfg };
           }
@@ -73,7 +84,14 @@
               allPlugins = linkify.plugins || {},
               plugins = [linkifier],
               tmpCont;
-          if ( use )
+          if ( use == undefined ||  use == '*' ) // use === undefined  ||  use === null
+          {
+            for ( var name in allPlugins )
+            {
+              plugins.push( allPlugins[name] );
+            }
+          }
+          else
           {
             use = $.isArray( use ) ? use : $.trim(use).split( / *, */ );
             var plugin,
@@ -86,13 +104,6 @@
               {
                 plugins.push( plugin );
               }
-            }
-          }
-          else
-          {
-            for ( var name in allPlugins )
-            {
-              plugins.push( allPlugins[name] );
             }
           }
 

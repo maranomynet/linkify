@@ -59,19 +59,36 @@
       });
 
     // disable plugins while running initial tests
-    test('No plugins', function () {
+    test('No plugins (plugins disabled)', function () {
         pluginBackup = $.fn.linkify.plugins;
         $.fn.linkify.plugins = {};
         prepTest('#basic').linkify().find('p').each(testEach);
       });
 
+    test('No plugins (\'\')', function () {
+        // re-enable plugins
+        $.fn.linkify.plugins = pluginBackup;
+        prepTest('#basic').linkify('').find('p').each(testEach);
+      });
+    test('No plugins ({ use: \'\' })', function () {
+        // re-enable plugins
+        $.fn.linkify.plugins = pluginBackup;
+        prepTest('#basic').linkify({ use: '' }).find('p').each(testEach);
+      });
 
-    // re-enable plugins and run plugin tests
+
     // 1) all plugins should be used by default
     test('With plugins (all by default)', function () {
-        $.fn.linkify.plugins = pluginBackup;
         prepTest('#wplugin').linkify().find('p').each(testEach);
       });
+    // 1b) Explicitly specify that all plugins should be used
+    test('With all plugins (\'*\')', function () {
+        prepTest('#wplugin').linkify('*').find('p').each(testEach);
+      });
+    test('With all plugins ({ use:\'*\' })', function () {
+        prepTest('#wplugin').linkify({ use:'*' }).find('p').each(testEach);
+      });
+
     // 2) try selecting plugins-by-name
     test('With Twitter plugins (String)', function () {
         prepTest('#wplugin').linkify('twitterUser, twitterHashtag').find('p').each(testEach);
@@ -104,6 +121,22 @@
     test('Only bogus plugins (config.use Array)', function () {
         prepTest('#noplugin').linkify({ use:['bogus'] }).find('p').each(testEach);
       });
+    test('Empty plugin string (\'\') should not default to "all"', function () {
+        prepTest('#noplugin').linkify('').find('p').each(testEach);
+      });
+    test('`Use` array with empty plugin string ([\'\']) should not default to "all"', function () {
+        prepTest('#noplugin').linkify({ use: [''] }).find('p').each(testEach);
+      });
+    test('Empty `use` array ([]) should not default to "all"', function () {
+        prepTest('#noplugin').linkify({ use: [] }).find('p').each(testEach);
+      });
+
+    var testLinks = function(links, selector){ 
+            same( links.toArray(), $(selector||'#basic').find('a:not(.preexisting)').toArray() );
+          };
+    var testLinks2 = function(links){  
+            testLinks(links, '#wplugin');
+          };
 
   });
 
@@ -149,7 +182,7 @@
       <p title="mailto:notreallyanemailaddressbutwhocares">mailto:notreallyanemailaddressbutwhocares<b>lorem ipsum dolor</b></p>
       <p title="mailto:really@an.email.addr">blah mailto:really@an.email.addr blah</p>
       <p title="ftp://www.foo.is">&lt;ftp://www.foo.is></p>
-      <p title="http://www.foo.is"><a href="http://www.foo.is">http://www.foo.is</a></p>
+      <p title="http://www.foo.is"><a href="http://www.foo.is" class="preexisting">http://www.foo.is</a></p>
       <p>tetur.www.foo.is elit,</p>
       <p>teturhttp://www.foo.is elit,</p>
       <p>nomailto://www.foo.is elit,</p>
