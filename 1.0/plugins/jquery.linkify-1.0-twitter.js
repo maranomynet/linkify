@@ -4,7 +4,7 @@
 
   Version 1.0
 
-  Copyright (c) 2009
+  Copyright (c) 2010
     Már Örlygsson  (http://mar.anomy.net/)  &
     Hugsmiðjan ehf. (http://www.hugsmidjan.is)
 
@@ -14,13 +14,13 @@
 */
 jQuery.extend(jQuery.fn.linkify.plugins, {
   twitterUser: {
-      re: /(^|["'(]|&lt;|\s)@([a-z0-9_-]+)(([:?]|\.+)?(\s|$)|&gt;|[)"',])/i,
-      tmpl: '$1<a href="http://www.twitter.com/$2">@$2</a>$3'
+      re: /(?:^|["'(]|&lt;|\s)@([a-z0-9_-]+)(?:(?:[:?]|\.+)?(?:\s|$)|&gt;|[)"',])/i,
+      tmpl: '<a href="http://www.twitter.com/$1">@$1</a>'
     },
   twitterHashtag: {
-      re: /(^|["'(]|&lt;|\s)(#.+?)(([:?]|\.+)?(\s|$)|&gt;|[)"',])/i,
-      tmpl: function (match, before, hashTag, after) {
-          return before+'<a href="http://www.twitter.com/search?q='+ encodeURIComponent(hashTag) +'">'+hashTag+'</a>'+after;
+      re: /(?:^|["'(]|&lt;|\s)(#.+?)(?:(?:[:?]|\.+)?(?:\s|$)|&gt;|[)"',])/i,
+      tmpl: function (match, hashTag) {
+          return '<a href="http://www.twitter.com/search?q='+ encodeURIComponent(hashTag) +'">'+hashTag+'</a>';
         }
     }
 });

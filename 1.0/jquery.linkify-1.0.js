@@ -69,12 +69,12 @@
 
 (function($){
 
-  var noProtocolUrl = /(^|["'(]|&lt;|\s)(www\..+?\..+?)(([:?]|\.+)?(\s|$)|&gt;|[)"',])/g,
-      httpOrMailtoUrl = /(^|["'(]|&lt;|\s)(((https?|ftp):\/\/|mailto:).+?)(([:?]|\.+)?(\s|$)|&gt;|[)"',])/g,
+  var noProtocolUrl = /(?:^|["'(]|&lt;|\s)(www\..+?\..+?)(?:(?:[:?]|\.+)?(?:\s|$)|&gt;|[)"',])/g,
+      httpOrMailtoUrl = /(?:^|["'(]|&lt;|\s)((?:(?:https?|ftp):\/\/|mailto:).+?)(?:(?:[:?]|\.+)?(?:\s|$)|&gt;|[)"',])/g,
       linkifier = function ( html ) {
           return html
-                      .replace( noProtocolUrl, '$1<a href="<``>://$2">$2</a>$3' )  // NOTE: we escape `"http` as `"<``>` to make sure `httpOrMailtoUrl` below doesn't find it as a false-positive
-                      .replace( httpOrMailtoUrl, '$1<a href="$2">$2</a>$5' )
+                      .replace( noProtocolUrl, '<a href="<``>://$1">$1</a>' )  // NOTE: we escape `"http` as `"<``>` to make sure `httpOrMailtoUrl` below doesn't find it as a false-positive
+                      .replace( httpOrMailtoUrl, '<a href="$1">$1</a>' )
                       .replace( /"<``>/g, '"http' );  // reinsert `"http`
         },
 
