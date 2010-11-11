@@ -166,6 +166,12 @@
       });
 
 
+    // Test the built-in mailto plugin
+    test('Test the mailto plugin', function () {
+        prepTest('#mailto').linkify('mailto').find('p').each(testEach);
+      });
+
+
   });
 
 
@@ -211,12 +217,14 @@
       <p title="mailto:really@an.email.addr">blah mailto:really@an.email.addr blah</p>
       <p title="ftp://www.foo.is">&lt;ftp://www.foo.is></p>
       <p title="http://www.foo.is"><a href="http://www.foo.is" class="preexisting">http://www.foo.is</a></p>
+      <p title="http://www.fo">this "http://www.fo"o.is"</p>
       <p>tetur.www.foo.is elit,</p>
       <p>teturhttp://www.foo.is elit,</p>
       <p>nomailto://www.foo.is elit,</p>
       <p title="http://www.foo.is">tetur (http://www.foo.is) elit,</p>
       <p><button>www.foo.is</button></p>
       <p><textarea>www.foo.is</textarea></p>
+      <p title="mailto:foo@bar.com">Not a URL mailto:foo@bar.com. no</p>
     </div>
 
     <div id="wplugin">
@@ -239,6 +247,25 @@
       <p>(@username)</p>
       <p>#hashtag</p>
       <p>blah #hashtag blah</p>
+    </div>
+
+    <div id="mailto">
+      <p title="mailto:f4oo@bar.com" data-linktext="f4oo@bar.com">f4oo@bar.com</p>
+      <p title="mailto:f4oo@bar.com" data-linktext="f4oo@bar.com">asdd&lt;f4oo@bar.com&gt;asdff</p>
+      <p title="mailto:f4oo@bar.com" data-linktext="f4oo@bar.com">asdf asdd&lt;f4oo@bar.com&gt; asdff</p>
+      <p title="mailto:foo4@bar.com" data-linktext="foo4@bar.com">my e-mail is foo4@bar.com.</p>
+      <p title="mailto:foo@bar4.com" data-linktext="foo@bar4.com">my e-mail is "foo@bar4.com"</p>
+      <p title="mailto:foo.bar@bar.c4.com" data-linktext="foo.bar@bar.c4.com">my e-mail is "foo.bar@bar.c4.com"</p>
+      <p title="mailto:foo+bar@bar.com" data-linktext="foo+bar@bar.com">foo+bar@bar.com</p>
+      <p title="mailto:foo+bar@bar.com" data-linktext="foo+bar@bar.com">my e-mail is foo+bar@bar.com.</p>
+      <p title="mailto:foo+bar@bar.com" data-linktext="foo+bar@bar.com">my e-mail is foo+bar@bar.com. asdf asdf .</p>
+      <p title="mailto:hing@sil.ly" data-linktext="hing@sil.ly">Not an email some"hing@sil.ly. yes</p>
+      <p title="mailto:foo@bar.com">Not an email mailto:foo@bar.com. yes</p>
+      <p>@twitteruser</p>
+      <p>And @twitteruser.</p>
+      <p>And @twitteruser.com</p>
+      <p>something@silly</p>
+      <p>this is something@silly. yes</p>
     </div>
 
   </div>
