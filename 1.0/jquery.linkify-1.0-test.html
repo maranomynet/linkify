@@ -25,22 +25,33 @@
 
   jQuery(function($){
 
-    var $ = jQuery;
+    var $ = jQuery,
+        msie7 = $.browser.msie  &&  parseInt($.browser.version, 10)<8;
     $('#warning').remove();
 
     var testEach = function(i){
             var p = $(this),
                 a = p.find('a'),
-                pTitle = p.attr('title'),
+                pUrl = p.attr('data-href'),
                 pLinktext = p.attr('data-linktext'),
                 isOk;
+            if ( msie7 )
+            {
+              // accommodate for the fact that in MSIE7 .attr('href') reports a normalized version of the URL - appending a trailing "/" on the end of the path...
+              var pUrlIE7 = p.attr('data-href-ie7');
+              if (pUrlIE7) 
+              {
+                pLinktext = pLinktext || pUrl;
+                pUrl = pUrlIE7;
+              }
+            }
 
-            isOk = !pTitle ?
+            isOk = !pUrl ?
                       a.length === 0:
-                      a.length === pTitle.split(',').length
-                        &&  $.map(a, function(a){ return $(a).attr('href')||''; }).join(',') === pTitle
-                        &&  $.map(a, function(a){ return $(a).text(); }).join(',') === (pLinktext||pTitle);
-            ok( isOk,  p.data('orgHtml')+'\n    ==>    '+this.innerHTML );
+                      a.length === pUrl.split(',').length
+                        &&  $.map(a, function(a){ return $(a).attr('href')||''; }).join(',') === pUrl
+                        &&  $.map(a, function(a){ return $(a).text(); }).join(',') === (pLinktext||pUrl);
+            ok( isOk,  p.data('orgHtml')+'\n    ==>    '+this.innerHTML )
           },
 
         prepTest = function (selector) {
@@ -195,63 +206,63 @@
   <h2 id="qunit-banner"></h2>
   <div id="qunit-testrunner-toolbar"></div>
   <h2 id="qunit-userAgent"></h2>
-  <ol id="qunit-tests"></ol>
+  <ol id="qunit-tests"><li></li></ol>
 
 
   <!-- test data goes in here -->
   <div id="main" style="display: none;">
     <!--
       Each <p> element's is linkified and then searched for links afterwards
-      the presence of title="" implies that a link should be created. No title="" implies that no links is expected
-      the value of title="" contains the expected href value of the created link.
+      the presence of data-href="" implies that a link should be created. No data-href="" implies that no links is expected
+      the value of data-href="" contains the expected href value of the created link.
     -->
     <!-- No plugins - just hyperlinks -->
     <div id="basic">
-      <p title="http://www.foo.is">http://www.foo.is</p>
-      <p title="http://www.foo.is/">http://www.foo.is/ asdf </p>
-      <p title="http://www.foo.is:8080">http://www.foo.is:8080. asd</p>
-      <p title="http://www.foo.is:8080,http://www.foo.is/#foo">http://www.foo.is:8080. asd (http://www.foo.is/#foo)...</p>
-      <p title="http://www.foo.is:8080/path/?foo=1#arg">http://www.foo.is:8080/path/?foo=1#arg #asdasdf</p>
-      <p title="http://www.foo.is/#foo">http://www.foo.is/#foo ?asddf</p>
-      <p title="http://www.foo.is/">should I visit http://www.foo.is/? Sure</p>
-      <p title="http://www.foo.is/?foo=1;bar=1">http://www.foo.is/?foo=1;bar=1</p>
-      <p title="http://www.foo.is" data-linktext="www.foo.is"> www.foo.is </p>
-      <p title="http://www.foo.is/" data-linktext="www.foo.is/"> www.foo.is/ </p>
-      <p title="http://www.foo.is/path" data-linktext="www.foo.is/path"> www.foo.is/path </p>
-      <p title="http://www.foo.is">Lorem ipsum, "http://www.foo.is" dolor sit amet,</p>
-      <p title="https://www.foo.is">&lt;a href="https://www.foo.is"&gt;foo&lt;/a&gt;</p>
-      <p title="http://www.foo.is">http://www.foo.is.</p>
-      <p title="http://www.foo.is/b/sh?foo=1#w4f" data-linktext="www.foo.is/b/sh?foo=1#w4f">sed do<b>www.foo.is/b/sh?foo=1#w4f</b> tempor</p>
-      <p title="http://www.foo.is/b/sh?foo=1#w4f" data-linktext="www.foo.is/b/sh?foo=1#w4f">sed do www.foo.is/b/sh?foo=1#w4f tempor</p>
-      <p title="mailto:notreallyanemailaddressbutwhocares">mailto:notreallyanemailaddressbutwhocares<b>lorem ipsum dolor</b></p>
-      <p title="mailto:really@an.email.addr">blah mailto:really@an.email.addr blah</p>
-      <p title="ftp://www.foo.is">&lt;ftp://www.foo.is></p>
-      <p title="http://www.foo.is"><a href="http://www.foo.is" class="preexisting">http://www.foo.is</a></p>
-      <p title="http://www.fo">this "http://www.fo"o.is"</p>
+      <p data-href="http://www.foo.is" data-href-ie7="http://www.foo.is/">http://www.foo.is</p>
+      <p data-href="http://www.foo.is/">http://www.foo.is/ asdf </p>
+      <p data-href="http://www.foo.is:8080" data-href-ie7="http://www.foo.is:8080/">http://www.foo.is:8080. asd</p>
+      <p data-href="http://www.foo.is:8080,http://www.foo.is/#foo" data-href-ie7="http://www.foo.is:8080/,http://www.foo.is/#foo">http://www.foo.is:8080. asd (http://www.foo.is/#foo)...</p>
+      <p data-href="http://www.foo.is:8080/path/?foo=1#arg">http://www.foo.is:8080/path/?foo=1#arg #asdasdf</p>
+      <p data-href="http://www.foo.is/#foo">http://www.foo.is/#foo ?asddf</p>
+      <p data-href="http://www.foo.is/">should I visit http://www.foo.is/? Sure</p>
+      <p data-href="http://www.foo.is/?foo=1;bar=1">http://www.foo.is/?foo=1;bar=1</p>
+      <p data-href="http://www.foo.is" data-href-ie7="http://www.foo.is/" data-linktext="www.foo.is"> www.foo.is </p>
+      <p data-href="http://www.foo.is/" data-linktext="www.foo.is/"> www.foo.is/ </p>
+      <p data-href="http://www.foo.is/path" data-linktext="www.foo.is/path"> www.foo.is/path </p>
+      <p data-href="http://www.foo.is" data-href-ie7="http://www.foo.is/">Lorem ipsum, "http://www.foo.is" dolor sit amet,</p>
+      <p data-href="https://www.foo.is" data-href-ie7="https://www.foo.is/">&lt;a href="https://www.foo.is"&gt;foo&lt;/a&gt;</p>
+      <p data-href="http://www.foo.is" data-href-ie7="http://www.foo.is/">http://www.foo.is.</p>
+      <p data-href="http://www.foo.is/b/sh?foo=1#w4f" data-linktext="www.foo.is/b/sh?foo=1#w4f">sed do<b>www.foo.is/b/sh?foo=1#w4f</b> tempor</p>
+      <p data-href="http://www.foo.is/b/sh?foo=1#w4f" data-linktext="www.foo.is/b/sh?foo=1#w4f">sed do www.foo.is/b/sh?foo=1#w4f tempor</p>
+      <p data-href="mailto:notreallyanemailaddressbutwhocares">mailto:notreallyanemailaddressbutwhocares<b>lorem ipsum dolor</b></p>
+      <p data-href="mailto:really@an.email.addr">blah mailto:really@an.email.addr blah</p>
+      <p data-href="ftp://www.foo.is" data-href-ie7="ftp://www.foo.is/">&lt;ftp://www.foo.is></p>
+      <p data-href="http://www.foo.is" data-href-ie7="http://www.foo.is/"><a href="http://www.foo.is" class="preexisting">http://www.foo.is</a></p>
+      <p data-href="http://www.fo" data-href-ie7="http://www.fo/">this "http://www.fo"o.is"</p>
       <p>tetur.www.foo.is elit,</p>
       <p>teturhttp://www.foo.is elit,</p>
       <p>nomailto://www.foo.is elit,</p>
-      <p title="http://www.foo.is">tetur (http://www.foo.is) elit,</p>
+      <p data-href="http://www.foo.is" data-href-ie7="http://www.foo.is/">tetur (http://www.foo.is) elit,</p>
       <p><button>www.foo.is</button></p>
       <p><textarea>www.foo.is</textarea></p>
-      <p title="mailto:foo@bar.com">Not a URL mailto:foo@bar.com. no</p>
+      <p data-href="mailto:foo@bar.com">Not a URL mailto:foo@bar.com. no</p>
     </div>
 
     <div id="wplugin">
-      <p title="http://www.foo.is">http://www.foo.is</p>
-      <p title="http://www.foo.is,http://www.twitter.com/username" data-linktext="http://www.foo.is,@username">blah http://www.foo.is @username blah</p>
-      <p title="http://www.foo.is/,http://www.twitter.com/search?q=%23hashtag" data-linktext="http://www.foo.is/,#hashtag">blah &lt;http://www.foo.is/&gt; blah #hashtag blah</p>
-      <p title="http://www.foo.is/,http://www.twitter.com/search?q=%23hashtag" data-linktext="http://www.foo.is/,#hashtag">blah (http://www.foo.is/) (#hashtag) blah</p>
-      <p title="http://www.twitter.com/username" data-linktext="@username">@username</p>
-      <p title="http://www.twitter.com/username" data-linktext="@username">blah @username blah</p>
-      <p title="http://www.twitter.com/username" data-linktext="@username">(@username)</p>
-      <p title="http://www.twitter.com/search?q=%23hashtag" data-linktext="#hashtag">#hashtag</p>
-      <p title="http://www.twitter.com/search?q=%23hashtag" data-linktext="#hashtag">blah #hashtag blah</p>
-      <p title="http://www.twitter.com/search?q=%23hashtag" data-linktext="#hashtag">blah (#hashtag)</p>
+      <p data-href="http://www.foo.is" data-href-ie7="http://www.foo.is/">http://www.foo.is</p>
+      <p data-href="http://www.foo.is,http://www.twitter.com/username" data-href-ie7="http://www.foo.is/,http://www.twitter.com/username" data-linktext="http://www.foo.is,@username">blah http://www.foo.is @username blah</p>
+      <p data-href="http://www.foo.is/,http://www.twitter.com/search?q=%23hashtag" data-linktext="http://www.foo.is/,#hashtag">blah &lt;http://www.foo.is/&gt; blah #hashtag blah</p>
+      <p data-href="http://www.foo.is/,http://www.twitter.com/search?q=%23hashtag" data-linktext="http://www.foo.is/,#hashtag">blah (http://www.foo.is/) (#hashtag) blah</p>
+      <p data-href="http://www.twitter.com/username" data-linktext="@username">@username</p>
+      <p data-href="http://www.twitter.com/username" data-linktext="@username">blah @username blah</p>
+      <p data-href="http://www.twitter.com/username" data-linktext="@username">(@username)</p>
+      <p data-href="http://www.twitter.com/search?q=%23hashtag" data-linktext="#hashtag">#hashtag</p>
+      <p data-href="http://www.twitter.com/search?q=%23hashtag" data-linktext="#hashtag">blah #hashtag blah</p>
+      <p data-href="http://www.twitter.com/search?q=%23hashtag" data-linktext="#hashtag">blah (#hashtag)</p>
     </div>
 
     <div id="noplugin">
-      <p title="http://www.foo.is">http://www.foo.is</p>
+      <p data-href="http://www.foo.is" data-href-ie7="http://www.foo.is/">http://www.foo.is</p>
       <p>@username</p>
       <p>blah @username blah</p>
       <p>(@username)</p>
@@ -260,17 +271,17 @@
     </div>
 
     <div id="mailto">
-      <p title="mailto:f4oo@bar.com" data-linktext="f4oo@bar.com">f4oo@bar.com</p>
-      <p title="mailto:f4oo@bar.com" data-linktext="f4oo@bar.com">asdd&lt;f4oo@bar.com&gt;asdff</p>
-      <p title="mailto:f4oo@bar.com" data-linktext="f4oo@bar.com">asdf asdd&lt;f4oo@bar.com&gt; asdff</p>
-      <p title="mailto:foo4@bar.com" data-linktext="foo4@bar.com">my e-mail is foo4@bar.com.</p>
-      <p title="mailto:foo@bar4.com" data-linktext="foo@bar4.com">my e-mail is "foo@bar4.com"</p>
-      <p title="mailto:foo.bar@bar.c4.com" data-linktext="foo.bar@bar.c4.com">my e-mail is "foo.bar@bar.c4.com"</p>
-      <p title="mailto:foo+bar@bar.com" data-linktext="foo+bar@bar.com">foo+bar@bar.com</p>
-      <p title="mailto:foo+bar@bar.com" data-linktext="foo+bar@bar.com">my e-mail is foo+bar@bar.com.</p>
-      <p title="mailto:foo+bar@bar.com" data-linktext="foo+bar@bar.com">my e-mail is foo+bar@bar.com. asdf asdf .</p>
-      <p title="mailto:hing@sil.ly" data-linktext="hing@sil.ly">Not an email some"hing@sil.ly. yes</p>
-      <p title="mailto:foo@bar.com">Not an email mailto:foo@bar.com. yes</p>
+      <p data-href="mailto:f4oo@bar.com" data-linktext="f4oo@bar.com">f4oo@bar.com</p>
+      <p data-href="mailto:f4oo@bar.com" data-linktext="f4oo@bar.com">asdd&lt;f4oo@bar.com&gt;asdff</p>
+      <p data-href="mailto:f4oo@bar.com" data-linktext="f4oo@bar.com">asdf asdd&lt;f4oo@bar.com&gt; asdff</p>
+      <p data-href="mailto:foo4@bar.com" data-linktext="foo4@bar.com">my e-mail is foo4@bar.com.</p>
+      <p data-href="mailto:foo@bar4.com" data-linktext="foo@bar4.com">my e-mail is "foo@bar4.com"</p>
+      <p data-href="mailto:foo.bar@bar.c4.com" data-linktext="foo.bar@bar.c4.com">my e-mail is "foo.bar@bar.c4.com"</p>
+      <p data-href="mailto:foo+bar@bar.com" data-linktext="foo+bar@bar.com">foo+bar@bar.com</p>
+      <p data-href="mailto:foo+bar@bar.com" data-linktext="foo+bar@bar.com">my e-mail is foo+bar@bar.com.</p>
+      <p data-href="mailto:foo+bar@bar.com" data-linktext="foo+bar@bar.com">my e-mail is foo+bar@bar.com. asdf asdf .</p>
+      <p data-href="mailto:hing@sil.ly" data-linktext="hing@sil.ly">Not an email some"hing@sil.ly. yes</p>
+      <p data-href="mailto:foo@bar.com">Not an email mailto:foo@bar.com. yes</p>
       <p>@twitteruser</p>
       <p>And @twitteruser.</p>
       <p>And @twitteruser.com</p>
