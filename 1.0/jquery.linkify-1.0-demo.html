@@ -20,7 +20,7 @@
           handleLinks: function (links) {
               links
                   .css('background', '#ff0')
-                  .append(function (i) { return ' (link '+(i+1)+')'; });
+                  .after(function (i) { return ' (link '+(i+1)+')'; });
             }
 
         });

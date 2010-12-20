@@ -14,13 +14,13 @@
 */
 jQuery.extend(jQuery.fn.linkify.plugins, {
   twitterUser: {
-      re: /(?:^|["'(]|&lt;|\s)@([a-z0-9_-]+)(?:(?:[:?]|\.+)?(?:\s|$)|&gt;|[)"',])/i,
-      tmpl: '<a href="http://www.twitter.com/$1">@$1</a>'
+      re: /(^|["'(]|&lt;|\s)@([a-z0-9_-]+)((?:[:?]|\.+)?(?:\s|$)|&gt;|[)"',])/i,
+      tmpl: '$1<a href="http://www.twitter.com/$2">@$2</a>$3'
     },
   twitterHashtag: {
-      re: /(?:^|["'(]|&lt;|\s)(#.+?)(?:(?:[:?]|\.+)?(?:\s|$)|&gt;|[)"',])/i,
-      tmpl: function (match, hashTag) {
-          return '<a href="http://www.twitter.com/search?q='+ encodeURIComponent(hashTag) +'">'+hashTag+'</a>';
+      re: /(^|["'(]|&lt;|\s)(#.+?)((?:[:?]|\.+)?(?:\s|$)|&gt;|[)"',])/i,
+      tmpl: function (match, pre, hashTag, post) {
+          return pre+'<a href="http://www.twitter.com/search?q='+ encodeURIComponent(hashTag) +'">'+hashTag+'</a>'+post;
         }
     }
 });

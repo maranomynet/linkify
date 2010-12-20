@@ -165,6 +165,16 @@
         $('#wplugin').linkify({  use: 'twitterUser, twitterHashtag',  handleLinks: testLinks2  });
       });
 
+    // Make sure adjacent spaces aren't swallowed.
+    test('Make sure adjacent spaces aren\'t swallowed', function () {
+        expect(4);
+        var textAfter = $('<'+'p>aaa http://www.foo.is bbb @user ccc #hashtag ddd email@foo.is eee<'+'/p>').linkify('mailto,twitterUser,twitterHashtag').text();
+        ok( /aaa .+? bbb/.test(textAfter), 'spaces before and after http: link are preserved' );
+        ok( /bbb .+? ccc/.test(textAfter), 'spaces before and after @twitterUser are preserved' );
+        ok( /ccc .+? ddd/.test(textAfter), 'spaces before and after #twitterHashtag are preserved' );
+        ok( /ddd .+? eee/.test(textAfter), 'spaces before and after mailto: address are preserved' );
+      });
+
 
     // Test the built-in mailto plugin
     test('Test the mailto plugin', function () {
