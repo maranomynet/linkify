@@ -70,28 +70,10 @@
         ok( $.fn.linkify.plugins, 'Plugins present');
       });
 
-    // disable plugins while running initial tests
-    test('No plugins (plugins disabled)', function () {
-        pluginBackup = $.fn.linkify.plugins;
-        $.fn.linkify.plugins = {};
-        prepTest('#basic').linkify().find('p').each(testEach);
-      });
-
-    test('No plugins (\'\')', function () {
-        // re-enable plugins
-        $.fn.linkify.plugins = pluginBackup;
-        prepTest('#basic').linkify('').find('p').each(testEach);
-      });
-    test('No plugins ({ use: \'\' })', function () {
-        // re-enable plugins
-        $.fn.linkify.plugins = pluginBackup;
-        prepTest('#basic').linkify({ use: '' }).find('p').each(testEach);
-      });
-
 
     // 1) all plugins should be used by default
     test('With plugins (all by default)', function () {
-        prepTest('#wplugin').linkify().find('p').each(testEach);
+        prepTest('#wplugin-detailed').linkify().find('p').each(testEach);
       });
     // 1b) Explicitly specify that all plugins should be used
     test('With all plugins (\'*\')', function () {
@@ -121,6 +103,24 @@
       });
     test('Mixing in some bogus plugins (config.use Array)', function () {
         prepTest('#wplugin').linkify({ use:['bogus', 'twitterUser', 'twitterHashtag'] }).find('p').each(testEach);
+      });
+
+    // disable plugins while running initial tests
+    test('No plugins (plugins disabled)', function () {
+        pluginBackup = $.fn.linkify.plugins;
+        $.fn.linkify.plugins = {};
+        prepTest('#basic').linkify().find('p').each(testEach);
+      });
+
+    test('No plugins (\'\')', function () {
+        // re-enable plugins
+        $.fn.linkify.plugins = pluginBackup;
+        prepTest('#noplugin').linkify('').find('p').each(testEach);
+      });
+    test('No plugins ({ use: \'\' })', function () {
+        // re-enable plugins
+        $.fn.linkify.plugins = pluginBackup;
+        prepTest('#noplugin').linkify({ use: '' }).find('p').each(testEach);
       });
 
     // try only supplying an invalid plugin name
@@ -247,21 +247,44 @@
       <p><button>www.foo.is</button></p>
       <p><textarea>www.foo.is</textarea></p>
       <p data-href="mailto:foo@bar.com">Not a URL mailto:foo@bar.com. no</p>
+      <p data-href="http://foo.is/,http://foo2.is/">http://foo.is/ http://foo2.is/</p>
+      <p data-href="http://foo.is/,http://www.foo2.is/" data-linktext="http://foo.is/,www.foo2.is/">http://foo.is/ www.foo2.is/</p>
+      <p data-href="http://www.foo.is/,http://www.foo2.is/" data-linktext="www.foo.is/,www.foo2.is/">www.foo.is/ www.foo2.is/</p>
     </div>
 
     <div id="wplugin">
-      <p data-href="http://www.foo.is" data-href-ie7="http://www.foo.is/">http://www.foo.is</p>
-      <p data-href="http://www.foo.is,http://www.twitter.com/username" data-href-ie7="http://www.foo.is/,http://www.twitter.com/username" data-linktext="http://www.foo.is,@username">blah http://www.foo.is @username blah</p>
+      <p data-href="http://www.foo.is/">http://www.foo.is/</p>
+      <p data-href="http://www.foo.is/,http://www.twitter.com/username" data-linktext="http://www.foo.is/,@username">blah http://www.foo.is/ @username blah</p>
       <p data-href="http://www.foo.is/,http://www.twitter.com/search?q=%23hashtag" data-linktext="http://www.foo.is/,#hashtag">blah &lt;http://www.foo.is/&gt; blah #hashtag blah</p>
+      <p data-href="http://www.twitter.com/search?q=%23hashtag" data-linktext="#hashtag">#hashtag</p>
+    </div>
+
+    <div id="wplugin-detailed">
       <p data-href="http://www.foo.is/,http://www.twitter.com/search?q=%23hashtag" data-linktext="http://www.foo.is/,#hashtag">blah (http://www.foo.is/) (#hashtag) blah</p>
       <p data-href="http://www.twitter.com/username" data-linktext="@username">@username</p>
       <p data-href="http://www.twitter.com/username" data-linktext="@username">blah @username blah</p>
       <p data-href="http://www.twitter.com/username" data-linktext="@username">(@username)</p>
-      <p data-href="http://www.twitter.com/search?q=%23hashtag" data-linktext="#hashtag">#hashtag</p>
       <p data-href="http://www.twitter.com/search?q=%23hashtag" data-linktext="#hashtag">blah #hashtag blah</p>
       <p data-href="http://www.twitter.com/search?q=%23hashtag" data-linktext="#hashtag">blah (#hashtag)</p>
+      <p># hashtag</p>
+      <p data-href="http://www.twitter.com/user1,http://www.twitter.com/user2" data-linktext="@user1,@user2">@user1 @user2</p>
       <p data-href="http://www.twitter.com/user1,http://www.twitter.com/user2" data-linktext="@user1,@user2">@user1 text @user2</p>
+      <p data-href="http://www.twitter.com/search?q=%23hash1,http://www.twitter.com/search?q=%23hash2" data-linktext="#hash1,#hash2">#hash1 #hash2</p>
       <p data-href="http://www.twitter.com/search?q=%23hash1,http://www.twitter.com/search?q=%23hash2" data-linktext="#hash1,#hash2">#hash1  text #hash2</p>
+      <p data-href="http://www.twitter.com/search?q=%23h" data-linktext="#h">#h</p>
+      <p data-href="http://www.twitter.com/search?q=%23_foo" data-linktext="#_foo">#_foo</p>
+      <p data-href="http://www.twitter.com/search?q=%23fo2" data-linktext="#fo2">*#fo2</p>
+      <p data-href="http://www.twitter.com/search?q=%23fo3" data-linktext="#fo3">.#fo3</p>
+      <p data-href="http://www.twitter.com/search?q=%23f%C3%BA" data-linktext="#fú">#fú</p>
+      <p data-href="http://www.twitter.com/search?q=%23f%C3%BA%C3%BA" data-linktext="#fúú">#fúú</p>
+      <p data-href="http://www.twitter.com/search?q=%23123f" data-linktext="#123f">#123f</p>
+      <p>#123</p>
+      <p data-href="http://www.twitter.com/search?q=%23foo" data-linktext="#foo">-#foo</p>
+      <p data-href="http://www.twitter.com/search?q=%23foo" data-linktext="#foo">#foo-bar text</p>
+      <p data-href="http://www.twitter.com/search?q=%23foo" data-linktext="#foo">#foo- text</p>
+      <p>#-foo</p>
+      <p data-href="http://www.twitter.com/search?q=%23%C3%BA%C3%BA" data-linktext="#úú">aaa #úú aaa</p>
+      <p data-href="http://www.twitter.com/search?q=%23%C3%BA%C3%BA" data-linktext="#úú">aaa #úú- aaa</p>
     </div>
 
     <div id="noplugin">
@@ -290,6 +313,9 @@
       <p>And @twitteruser.com</p>
       <p>something@silly</p>
       <p>this is something@silly. yes</p>
+      <p data-href="mailto:f4oo@bar.com,mailto:f2oo@bar.com" data-linktext="f4oo@bar.com,f2oo@bar.com">f4oo@bar.com f2oo@bar.com</p>
+      <p data-href="mailto:f4oo@bar.com,mailto:f2oo@bar.com" data-linktext="f4oo@bar.com,f2oo@bar.com">f4oo@bar.com text f2oo@bar.com</p>
+      <p data-href="mailto:f4oo@bar.com,mailto:f2oo@bar.com" data-linktext="f4oo@bar.com,f2oo@bar.com">text f4oo@bar.com text f2oo@bar.com text</p>
     </div>
 
   </div>
