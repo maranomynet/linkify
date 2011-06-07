@@ -1,4 +1,4 @@
-/* encoding: utf-8
+﻿/* encoding: utf-8
 
   ****  linkify plugin for jQuery - automatically finds and changes URLs in text content into proper hyperlinks  ****
 
@@ -69,7 +69,7 @@
 
 (function($){
 
-  var noProtocolUrl = /(^|["'(\s]|&lt;)(www\..+?\..+?)((?:[:?]|\.+)?(?:\s|$)|&gt;|[)"',])/g,
+  var noProtocolUrl = /(\b(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)[-A-Z0-9+&@#\/%=~_|$?!:,.]*[A-Z0-9+&@#\/%=~_|$])/gi,
       httpOrMailtoUrl = /(^|["'(\s]|&lt;)((?:(?:https?|ftp):\/\/|mailto:).+?)((?:[:?]|\.+)?(?:\s|$)|&gt;|[)"',])/g,
       linkifier = function ( html ) {
           return html
